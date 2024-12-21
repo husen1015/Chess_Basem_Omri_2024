@@ -3,8 +3,8 @@
 
 
 class King : public Piece {
-
-	King();
+public:
+	King(std::string place, char color);
 	~King();
 
 	virtual char isTheMoveLegal(std::string& places) override;

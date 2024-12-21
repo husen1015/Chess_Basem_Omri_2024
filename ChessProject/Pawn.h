@@ -3,8 +3,8 @@
 
 
 class Pawn : public Piece {
-
-	Pawn();
+public:
+	Pawn(std::string place, char color);
 	~Pawn();
 
 	virtual char isTheMoveLegal(std::string& places) override;

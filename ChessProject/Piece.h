@@ -3,7 +3,7 @@
 #include <iostream>
 class Piece {
 public:
-	Piece();
+	Piece(std::string place, char color);
 	~Piece();
 	std::string getColor();
 	virtual void move(std::string& places)=0;

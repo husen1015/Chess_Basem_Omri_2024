@@ -3,8 +3,8 @@
 
 
 class Queen : public Piece {
-
-	Queen();
+public:
+	Queen(std::string place,char color);
 	~Queen();
 
 	virtual char isTheMoveLegal(std::string& places) override;
