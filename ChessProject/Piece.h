@@ -8,7 +8,7 @@ public:
 	std::string getColor();
 	virtual void move(std::string& places)=0;
 	virtual char isTheMoveLegal(std::string& places)=0;
-private:
+protected:
 	bool isAlive;
 	char typeAndColor;
 	std::string place;
