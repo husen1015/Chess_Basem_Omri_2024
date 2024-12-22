@@ -1,8 +1,8 @@
 #pragma once
-#include "Piece.h"
+#include "Bishop.h"
+#include "Rook.h"
 
-
-class Queen : public Piece {
+class Queen : public Bishop , public Rook {
 public:
 	Queen(std::string place,char color);
 	~Queen();

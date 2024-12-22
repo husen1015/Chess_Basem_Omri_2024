@@ -11,7 +11,8 @@ Bishop::~Bishop()
 
 int Bishop::move(std::string& places)
 {
-
+	std::string targetSquare = std::to_string(move[2]) + std::to_string(move[3]);
+	this->place = targetSquare;
 	return 0;
 }
 

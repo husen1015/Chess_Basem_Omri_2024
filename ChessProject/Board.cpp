@@ -91,7 +91,14 @@ int Board::changeBoard(std::string move)
 
 	
 	this->currentBoard[currentRow][currentCol] = new Empty(piecePostion, '#');
-
+	if (this->player == 'b')
+	{
+		this->player = 'w';
+	}
+	else
+	{
+		this->player = 'b';
+	}
 	return moveCode;
 
 
