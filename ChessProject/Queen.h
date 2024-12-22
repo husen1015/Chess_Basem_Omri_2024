@@ -7,7 +7,7 @@ public:
 	Queen(std::string place,char color);
 	~Queen();
 
-	virtual char isTheMoveLegal(std::string& places) override;
-	virtual void move(std::string& move) override;
+	virtual int isTheMoveLegal(std::string& places, Piece* board[8][8]) override;
+	virtual int move(std::string& move) override; 
 
 };

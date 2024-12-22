@@ -15,10 +15,14 @@ public:
 	Board();
 	~Board();
 	void printBoard();
-	void changeBoard(std::string move);
+	int changeBoard(std::string move);
+
 	// fields
 	Piece* currentBoard[8][8];
 	char getPlayer();
 private:
 	char player;
+	// helper function
+	// Function checks if the move is legal in board terms
+	int checkIfTheMoveIsLegalOnTheBoard(std::string move); // the name is too long might change later but this will do for now
 };

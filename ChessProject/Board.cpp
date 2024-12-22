@@ -17,7 +17,7 @@ Board::Board()
 		this->currentBoard[j][i] = new Pawn(char(int(c) + i) + "7",'P');
 	}
 	c = 'a';
-	for (int i = 3; i < 7; i++)
+	for (int i = 2; i < 6; i++)
 	{
 		for (int j = 0; j < 8; j++)
 		{
@@ -58,18 +58,86 @@ void Board::printBoard()
 	{
 		for (int j = 0; j < 8; j++)
 		{
-			std::cout << this->currentBoard[i][j]->getColor() << ' ';
+			std::cout << this->currentBoard[i][j]->getName() << ' ';
 		}
 		std::cout << "\n";
 	}
 }
 
-void Board::changeBoard(std::string move)
+int Board::changeBoard(std::string move)
 {
+	int moveCode = checkIfTheMoveIsLegalOnTheBoard(move);
+
+
+	if (moveCode != 0 || moveCode != 1)
+	{
+		return moveCode; // If the move wasnt legal we return
+	}
+
+	std::string piecePostion = std::to_string(move[0]) + std::to_string(move[1]);
+	std::string targetPostion = std::to_string(move[2]) + std::to_string(move[3]);
+	int currentCol = piecePostion[0] - 'a';
+	int currentRow = piecePostion[1] - '1';
+	int targetCol = targetPostion[0] - 'a';
+	int targetRow = targetPostion[1] - '1';
+
+	moveCode = this->currentBoard[currentRow][currentCol]->move(move);
+
+	delete this->currentBoard[targetRow][targetCol];
+
+	this->currentBoard[targetRow][targetCol] = this->currentBoard[currentRow][currentCol];
+
+	delete this->currentBoard[currentRow][currentCol];
+
+	
+	this->currentBoard[currentRow][currentCol] = new Empty(piecePostion, '#');
+
+	return moveCode;
+
 
 }
 
 char Board::getPlayer()
 {
 	return this->player;
+}
+
+int Board::checkIfTheMoveIsLegalOnTheBoard(std::string move)
+{
+	std::string piecePostion = std::to_string(move[0]) + std::to_string(move[1]);
+	std::string targetPostion = std::to_string(move[2]) + std::to_string(move[3]);
+
+
+	// We convert the moves in chess terms to indexes of the two dimensional array (a8 will be 0, 0)
+
+	int currentCol = piecePostion[0] - 'a';
+	int currentRow = piecePostion[1] - '1';
+	int targetCol = targetPostion[0] - 'a';
+	int targetRow = targetPostion[1] - '1';
+	bool pieceKill = false; // Flag that symbols if we intend to kill a piece in the move usefull for error code 3
+	if (std::isalpha(this->currentBoard[targetRow][targetCol]->getName()))
+	{
+		pieceKill = true; // If there is a piece in the targeted square then the user intends to kill a piece
+	}
+	
+	if (currentRow > 7 || currentRow < 0 || currentCol > 7 || currentCol < 0)
+	{
+		return 5; // 5 is the error code we return if the indexes are invalid (out of the board range)
+	}
+
+	if (this->currentBoard[currentRow][currentCol]->getName() == '#' || std::isupper(this->currentBoard[currentRow][currentCol]->getName()) && this->player == 'b' || std::islower(this->currentBoard[currentRow][currentCol]->getName()) && this->player == 'w')
+	{
+		return 2; // 2 Is the error code we return if there isnt currently a piece of the current player on the specified position
+	}
+
+	if (targetCol == currentCol && targetRow  == currentRow)
+	{
+		return 7; // 7 is the error code we return when the target position is the same as the current position
+	}
+	if (pieceKill && std::isupper(this->currentBoard[currentRow][currentCol]->getName() == std::isupper(this->currentBoard[targetRow][targetCol]->getName()))) // Check if we want to kill a piece the same color as us
+	{
+		return 3; // 3 is the error code we return if the player tries to kill there own piece 
+	}
+
+	return this->currentBoard[currentRow][currentCol]->isTheMoveLegal(move, this->currentBoard);
 }

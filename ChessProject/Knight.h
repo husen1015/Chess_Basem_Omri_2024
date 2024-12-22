@@ -3,7 +3,7 @@
 class Knight : public Piece {
 public:
 	Knight(std::string place, char color);
-	Knight();
-	virtual void move(std::string& places) override;
-	virtual char isTheMoveLegal(std::string& places) override;
+	~Knight();
+	virtual int move(std::string& places) override;
+	virtual int isTheMoveLegal(std::string& places, Piece* board[8][8]) override;
 };

@@ -3,7 +3,8 @@
 class Bishop : public Piece {
 public:
 	Bishop(std::string place, char color);
-	Bishop();
-	virtual void move(std::string& places) override;
-	virtual char isTheMoveLegal(std::string& places) override;
+	~Bishop();
+	virtual int move(std::string& places) override;
+	virtual int isTheMoveLegal(std::string& places, Piece* board[8][8]) override;
+
 };
