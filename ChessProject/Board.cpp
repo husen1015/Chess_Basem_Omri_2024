@@ -87,7 +87,7 @@ int Board::changeBoard(std::string move)
 
 	this->currentBoard[targetRow][targetCol] = this->currentBoard[currentRow][currentCol];
 
-	delete this->currentBoard[currentRow][currentCol];
+	//delete this->currentBoard[currentRow][currentCol];
 
 	
 	this->currentBoard[currentRow][currentCol] = new Empty(piecePostion, '#');
@@ -120,7 +120,8 @@ int Board::checkIfTheMoveIsLegalOnTheBoard(std::string move)
 		pieceKill = true; // If there is a piece in the targeted square then the user intends to kill a piece
 	}
 	
-	if (currentRow > 7 || currentRow < 0 || currentCol > 7 || currentCol < 0)
+	if (currentRow > 7 || currentRow < 0 || currentCol > 7 || currentCol < 0 || targetCol < 0||
+		targetCol > 7 || targetRow < 0 || targetCol > 7)
 	{
 		return 5; // 5 is the error code we return if the indexes are invalid (out of the board range)
 	}

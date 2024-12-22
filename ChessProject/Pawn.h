@@ -3,6 +3,8 @@
 
 
 class Pawn : public Piece {
+private:
+	bool hasMoved;
 public:
 	Pawn(std::string place, char color);
 	~Pawn();

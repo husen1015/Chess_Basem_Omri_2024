@@ -10,7 +10,7 @@ Piece::~Piece()
 {
 }
 
-char Piece::getName()
+char Piece::getName() const
 {
 	return this->typeAndColor;
 }
