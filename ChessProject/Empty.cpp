@@ -18,3 +18,5 @@ int Empty::isTheMoveLegal(std::string& places, Piece* board[8][8])
 {
 	return 0;
 }
+
+

@@ -34,7 +34,7 @@ int Queen::move(std::string& move)
 	this->place = targetSquare;
 	return 0;
 }
-int checkIfPieceInTheWayB(int currentCol, int targetCol, int currentRow, int targetRow, Piece* board[8][8])
+int Queen::checkIfPieceInTheWayB(int currentCol, int targetCol, int currentRow, int targetRow, Piece* board[8][8])
 {
 	if (targetCol > currentCol)
 	{
@@ -90,7 +90,7 @@ int checkIfPieceInTheWayB(int currentCol, int targetCol, int currentRow, int tar
 	}
 	return 0;
 }
-int checkIfPieceInTheWayR(int currentCol, int targetCol, int currentRow, int targetRow, Piece* board[8][8])
+int Queen::checkIfPieceInTheWayR(int currentCol, int targetCol, int currentRow, int targetRow, Piece* board[8][8])
 {
 	int i = 0;
 	if (currentCol == targetCol) // Check if there is a piece in the way
