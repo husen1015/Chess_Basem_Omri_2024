@@ -16,7 +16,9 @@ public:
 	~Board();
 	void printBoard();
 	int changeBoard(std::string move);
-
+	bool isCheck(char player);
+	bool isCheckMate(char player);
+	std::string boardInMessage();
 	// fields
 	Piece* currentBoard[8][8];
 	char getPlayer();

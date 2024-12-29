@@ -66,40 +66,58 @@ void Board::printBoard()
 
 int Board::changeBoard(std::string move)
 {
-	int moveCode = checkIfTheMoveIsLegalOnTheBoard(move);
-
-
-	if (moveCode != 0 || moveCode != 1)
-	{
-		return moveCode; // If the move wasnt legal we return
-	}
-
 	std::string piecePostion = std::to_string(move[0]) + std::to_string(move[1]);
 	std::string targetPostion = std::to_string(move[2]) + std::to_string(move[3]);
 	int currentCol = piecePostion[0] - 'a';
 	int currentRow = piecePostion[1] - '1';
 	int targetCol = targetPostion[0] - 'a';
 	int targetRow = targetPostion[1] - '1';
-
-	moveCode = this->currentBoard[currentRow][currentCol]->move(move);
-
-	delete this->currentBoard[targetRow][targetCol];
-
-	this->currentBoard[targetRow][targetCol] = this->currentBoard[currentRow][currentCol];
-
-	//delete this->currentBoard[currentRow][currentCol];
+	int moveCode = checkIfTheMoveIsLegalOnTheBoard(move);
+	if (moveCode != 0 || moveCode != 1)
+	{
+		return moveCode;
+	}
 
 	
-	this->currentBoard[currentRow][currentCol] = new Empty(piecePostion, '#');
-	if (this->player == 'b')
+	Piece* temp = currentBoard[targetRow][targetCol];
+	currentBoard[targetRow][targetCol] = currentBoard[currentRow][currentCol];
+	currentBoard[currentRow][currentCol] = new Empty(piecePostion, '#');
+
+	
+	if (isCheck(player)) 
 	{
-		this->player = 'w';
+		
+		currentBoard[currentRow][currentCol] = currentBoard[targetRow][targetCol];
+		currentBoard[targetRow][targetCol] = temp;
+		return 4; 
 	}
-	else
+
+	char opponentPlayer;
+	if (player == 'W') 
 	{
-		this->player = 'b';
+		opponentPlayer = 'B';
 	}
-	return moveCode;
+	else {
+		opponentPlayer = 'W';
+	}
+
+	if (isCheck(opponentPlayer)) 
+	{
+		if (isCheckMate(opponentPlayer)) {
+			return 8;
+		}
+		return 1;
+	}
+
+	if (player == 'W') 
+	{
+		player = 'B';
+	}
+	else 
+	{
+		player = 'W';
+	}
+	return 0; 
 
 
 }
@@ -121,31 +139,97 @@ int Board::checkIfTheMoveIsLegalOnTheBoard(std::string move)
 	int currentRow = piecePostion[1] - '1';
 	int targetCol = targetPostion[0] - 'a';
 	int targetRow = targetPostion[1] - '1';
-	bool pieceKill = false; // Flag that symbols if we intend to kill a piece in the move usefull for error code 3
-	if (std::isalpha(this->currentBoard[targetRow][targetCol]->getName()))
+	if (this->currentBoard[currentRow][currentCol]->getColor() != this->player ||
+		this->currentBoard[currentRow][currentCol]->getName() == '#')
 	{
-		pieceKill = true; // If there is a piece in the targeted square then the user intends to kill a piece
+		return 2;
 	}
-	
-	if (currentRow > 7 || currentRow < 0 || currentCol > 7 || currentCol < 0 || targetCol < 0||
+	if (this->currentBoard[targetRow][targetCol]->getColor() == this->player) // Check if we want to kill a piece the same color as us
+	{
+		return 3; // 3 is the error code we return if the player tries to kill there own piece 
+	}
+
+	if (currentRow > 7 || currentRow < 0 || currentCol > 7 || currentCol < 0 || targetCol < 0 ||
 		targetCol > 7 || targetRow < 0 || targetCol > 7)
 	{
 		return 5; // 5 is the error code we return if the indexes are invalid (out of the board range)
 	}
 
-	if (this->currentBoard[currentRow][currentCol]->getName() == '#' || std::isupper(this->currentBoard[currentRow][currentCol]->getName()) && this->player == 'b' || std::islower(this->currentBoard[currentRow][currentCol]->getName()) && this->player == 'w')
-	{
-		return 2; // 2 Is the error code we return if there isnt currently a piece of the current player on the specified position
-	}
-
-	if (targetCol == currentCol && targetRow  == currentRow)
+	if (targetCol == currentCol && targetRow == currentRow)
 	{
 		return 7; // 7 is the error code we return when the target position is the same as the current position
-	}
-	if (pieceKill && std::isupper(this->currentBoard[currentRow][currentCol]->getName() == std::isupper(this->currentBoard[targetRow][targetCol]->getName()))) // Check if we want to kill a piece the same color as us
-	{
-		return 3; // 3 is the error code we return if the player tries to kill there own piece 
 	}
 
 	return this->currentBoard[currentRow][currentCol]->isTheMoveLegal(move, this->currentBoard);
 }
+
+bool Board::isCheck(char player) {
+	std::string kingPos;
+	
+	for (int row = 0; row < 8; ++row) {
+		for (int col = 0; col < 8; ++col) {
+			Piece* piece = currentBoard[row][col];
+			if (piece->getName() == 'K' && player == 'W') {
+				kingPos = piece->getPlace();
+			}
+			else if (piece->getName() == 'k' && player == 'B') {
+				kingPos = piece->getPlace(); 
+			}
+		}
+	}
+
+	for (int row = 0; row < 8; ++row) {
+		for (int col = 0; col < 8; ++col) {
+			Piece* piece = currentBoard[row][col];
+			if ((player == 'W' && islower(piece->getName())) || (player == 'B' && isupper(piece->getName()))) {
+				if (piece->isTheMoveLegal(kingPos, currentBoard) == 0) { 
+					return true; 
+				}
+			}
+		}
+	}
+	return false; 
+}
+bool Board::isCheckMate(char player) {
+	for (int row = 0; row < 8; ++row) {
+		for (int col = 0; col < 8; ++col) {
+			Piece* piece = currentBoard[row][col];
+			if ((player == 'W' && isupper(piece->getName())) || (player == 'B' && islower(piece->getName()))) {
+				for (int targetRow = 0; targetRow < 8; ++targetRow) {
+					for (int targetCol = 0; targetCol < 8; ++targetCol) {
+						std::string move = { char(col + 'A'), char(row + '1'), char(targetCol + 'A'), char(targetRow + '1') };
+						if (piece->isTheMoveLegal(move, currentBoard) == 0) {
+							Piece* temp = currentBoard[targetRow][targetCol];
+							currentBoard[targetRow][targetCol] = currentBoard[row][col];
+							currentBoard[row][col] = new Empty("##", '#');
+
+							bool stillCheck = isCheck(player);
+
+							currentBoard[row][col] = currentBoard[targetRow][targetCol];
+							currentBoard[targetRow][targetCol] = temp;
+
+							if (!stillCheck) {
+								return false;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	return true;
+}
+
+std::string Board::boardInMessage()
+{
+	std::string str = "";
+	for (int i = 0; i < 8; i++)
+	{
+		for (int j = 0; j < 8; j++)
+		{
+			str += this->currentBoard[i][j]->getName();
+		}
+	}
+	return str;
+}
+
